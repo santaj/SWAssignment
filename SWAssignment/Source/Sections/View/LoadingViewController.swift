@@ -20,20 +20,10 @@ class LoadingView: UIView {
         ]
         return indicator
     }()
-    
-    var blurEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .extraLight)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.autoresizingMask = [
-            .flexibleWidth, .flexibleHeight
-        ]
-        return blurEffectView
-    }()
-    
+
     public func setupSpinner() {
-        self.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        blurEffectView.frame = self.bounds
-        self.insertSubview(blurEffectView, at: 0)
+        self.backgroundColor = UIColor.black.withAlphaComponent(0.25)
+        self.frame = self.bounds
         loadingActivityIndicator.center = CGPoint(
             x: self.bounds.midX,
             y: self.bounds.midY
