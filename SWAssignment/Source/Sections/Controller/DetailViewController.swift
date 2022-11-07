@@ -99,7 +99,7 @@ extension DetailViewController: UITableViewDataSource {
             allCharactersResultInFilm.sort {$0.name < $1.name}
             config.text = allCharactersResultInFilm.count > 0 ? allCharactersResultInFilm[indexPath.row].name : "Unable to show characters, try again later"
         case .characters:
-            allFilmsResultForCharacter.sort {$0.releaseDate < $1.releaseDate}
+            allFilmsResultForCharacter.sort {$0.releaseDate > $1.releaseDate}
             config.text = allFilmsResultForCharacter.count > 0 ? allFilmsResultForCharacter[indexPath.row].title : "Unable to show films, try again later"
             config.secondaryText = allFilmsResultForCharacter.count > 0 ? allFilmsResultForCharacter[indexPath.row].releaseDate : "No date"
         }

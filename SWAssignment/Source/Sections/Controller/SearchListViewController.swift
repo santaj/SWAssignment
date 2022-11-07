@@ -14,11 +14,13 @@ class SearchListViewController: NiblessViewController {
     private var state: State = .idle
     private let searchController = UISearchController(searchResultsController: nil)
     private let loadingView = LoadingView()
+    
     private var films: [Film] = []
     private var filterdFilms: [Film] = []
     private var characters: [Person] = []
     private var filterdCharacters: [Person] = []
     private var selectedCategory: Category = .movies
+    
     private var cancellable: AnyCancellable?
     
     private lazy var tableView: UITableView = {
@@ -78,9 +80,15 @@ class SearchListViewController: NiblessViewController {
     }
     
     private func setupSpinner() {
+        searchController.searchBar.isUserInteractionEnabled = false
         view.addSubview(loadingView)
         loadingView.setupSpinner()
         loadingView.frame = view.bounds
+    }
+    
+    private func setupResultView() {
+        loadingView.removeFromSuperview()
+        searchController.searchBar.isUserInteractionEnabled = true
     }
     
     private func updateView(with state: State) {
@@ -90,11 +98,9 @@ class SearchListViewController: NiblessViewController {
         case .loading:
             self.state = .loading
             setupSpinner()
-            searchController.searchBar.isUserInteractionEnabled = false
         case .resultFilms(let result):
-            loadingView.removeFromSuperview()
+            setupResultView()
             self.state = .resultFilms(result)
-            searchController.searchBar.isUserInteractionEnabled = true
             switch result {
             case .failure(let error):
                 showAlertAction(type: .movies, title: "Unable to get movies", message: error.localizedDescription)
@@ -102,9 +108,8 @@ class SearchListViewController: NiblessViewController {
                 self.films = result
             }
         case .resultPersons(let result):
-            loadingView.removeFromSuperview()
+            setupResultView()
             self.state = .resultPersons(result)
-            searchController.searchBar.isUserInteractionEnabled = true
             switch result {
             case .failure(let error):
                 showAlertAction(type: .characters, title: "Unable to get characters", message: error.localizedDescription)
@@ -186,11 +191,14 @@ extension SearchListViewController: UITableViewDataSource, UITableViewDelegate {
         let vc = DetailViewController(category: selectedCategory)
         vc.allCharacters = characters
         vc.allFilms = films
-        if selectedCategory == .movies {
+        
+        switch selectedCategory {
+        case .movies:
             vc.film = self.filterdFilms[indexPath.row]
-        }else{
+        case .characters:
             vc.character = self.filterdCharacters[indexPath.row]
         }
+        
         let nav = UINavigationController(rootViewController: vc)
         self.present(nav, animated: true)
     }
